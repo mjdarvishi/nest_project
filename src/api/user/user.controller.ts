@@ -1,16 +1,17 @@
-import { Body, Controller, Get, HttpCode, Param, ParseIntPipe, Post, Res, UsePipes } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, Param, ParseIntPipe, Post, Query, Res, UsePipes } from '@nestjs/common';
 import { CreateUserDto } from './dto/create_user.dto';
 import { UserService } from './user.service';
 import { ApiTags } from '@nestjs/swagger/index'
 import { CreateUserDecorator } from './decorator/create_user.decorator';
-import { ResponseApi, ResponseInterface } from '../tools/interfaces/response.interface';
+import { PaginationResponseInterface, ResponseApi, ResponseInterface } from '../utils/response.utils';
 import { UserEntity } from './user.entity';
 import { Response } from 'express';
+import { take } from 'rxjs';
 
 @ApiTags('User')
 @Controller()
 export class UserController {
-    constructor(private readonly usersService: UserService) { }
+    constructor(private readonly usersService: UserService) {}
 
     @Post()
     @HttpCode(201)
@@ -21,11 +22,17 @@ export class UserController {
     }
 
     @Get(':id')
-    async findOne(@Param('id', ParseIntPipe) id: number, @Res() res: Response): Promise<void> {
+    async findOne(@Param('id', ParseIntPipe) id: number): Promise<void> {
         const user = await this.usersService.findOne(id);
         if (!user) {
-            ResponseApi.faildResponseWithCode(res, 'item not found', 404);
+            throw new BadRequestException('Invalid user');
         }
-        ResponseApi.successResponseWithCode<UserEntity>(res, 'item retrived successfuly', 200, user)
+        ResponseApi.successResponse<UserEntity>('item retrived successfuly', 200, user)
+    }
+    //pagination
+    @Get('')
+    async findAll(@Query('page', ParseIntPipe) page: number,@Query('limit', ParseIntPipe) limit: number): Promise<PaginationResponseInterface<UserEntity[]>> {
+        const users = await this.usersService.findAll(page,limit);
+        return ResponseApi.paginateResponse<UserEntity[]>('item retrived successfuly', 200,users,page,limit)
     }
 }
