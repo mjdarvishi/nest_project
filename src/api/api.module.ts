@@ -2,11 +2,13 @@ import { Module } from '@nestjs/common';
 import { UserModule } from './user/user.module';
 import { RouterModule } from '@nestjs/core'
 import { AuthModule } from './auth/auth.module';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
     UserModule,
     AuthModule,
+    ProductModule,
     RouterModule.register([
       {
         path: 'api',
@@ -18,6 +20,10 @@ import { AuthModule } from './auth/auth.module';
           {
             module: AuthModule,
             path: 'auth'
+          },
+          {
+            module: ProductModule,
+            path: 'product'
           },
         ]
       },
