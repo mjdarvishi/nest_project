@@ -23,6 +23,12 @@ export class UserService {
     })
     return result;
   }
+  public async findByEmail(email:string) {
+    var result = await this.usersRepository.findOne({
+      where: { email:email }
+    })
+    return result;
+  }
   public async findAll(page:number,take:number) {
     var result = await this.usersRepository.findAndCount({
              take: take,
