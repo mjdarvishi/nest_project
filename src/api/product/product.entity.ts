@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne } from 'typeorm';
+import { UserEntity } from '../user/user.entity';
 
 @Entity("products")
 export class ProductEntity {
@@ -16,4 +17,7 @@ export class ProductEntity {
 
   @UpdateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)", onUpdate: "CURRENT_TIMESTAMP(6)" })
   public updatedAt: Date;
+  
+  @ManyToOne(type => UserEntity, user => user.products) user: UserEntity;  
 }
+
