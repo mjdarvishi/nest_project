@@ -29,12 +29,22 @@ export class UserEntity {
   @UpdateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)", onUpdate: "CURRENT_TIMESTAMP(6)" })
   public updatedAt: Date;
 
-  @OneToOne(type => UserDetailsEntity) @JoinColumn({ name: 'detailId' }) 
+  @OneToOne(type => UserDetailsEntity) @JoinColumn({ name: 'detailId' })
   details: UserDetailsEntity;
 
-  @OneToMany(type => ProductEntity, product => product.user) products:ProductEntity[]; 
+  @OneToMany(type => ProductEntity, product => product.user) products: ProductEntity[];
 
-  @ManyToMany(type => ProductEntity) @JoinTable() 
+  @ManyToMany(type => ProductEntity) @JoinTable({
+    name: 'products_categories',
+    joinColumn: {
+      name: "question",
+      referencedColumnName: "id"
+    },
+    inverseJoinColumn: {
+      name: "category",
+      referencedColumnName: "id"
+    }
+  })
   fav: ProductEntity[];
 
 }
